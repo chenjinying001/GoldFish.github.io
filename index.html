@@ -126,90 +126,25 @@
     </div>
 
   </div>
-<div>
-  <audio id="audio" src="https://tyst.migu.cn/public/product9th/product44/2021/09/2619/2021%E5%B9%B406%E6%9C%8804%E6%97%A501%E7%82%B903%E5%88%86%E5%86%85%E5%AE%B9%E5%87%86%E5%85%A5%E5%8D%8E%E7%BA%B32%E9%A6%96500955/%E6%A0%87%E6%B8%85%E9%AB%98%E6%B8%85/MP3_320_16_Stero/6005752QGEV190651.mp3" loop autoplay></audio>
+<div id="bgmvideo">
+  <audio id="audio" src="" loop autoplay></audio>
   <button id="start" style="position: absolute;">start</button>
 </div>
 </body>
+<script type="text/javascript" src="img/jquery-3.1.1.min.js"></script>
 
-<script>
-  let htmlAudio = document.querySelector('#audio')
-  // 这里是AudioContext给安卓用
-  window.AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext || window.msAudioContext;
-
-  var context = new window.AudioContext();
-  var source = null;
-  var audioBuffer = null;
-
-  function stopSound() {
-    if (source) {
-      source.stop(0); //立即停止
-    }
-  }
-
-  function playSound() {
-    source = context.createBufferSource();
-    source.buffer = audioBuffer;
-    source.loop = true; //循环播放
-    source.connect(context.destination);
-    if (!(/iphone/.test(navigator.userAgent.toLowerCase()))) {
-      source.start(0); //立即播放
-
-    }
-
-    function initSound(arrayBuffer) {
-      context.decodeAudioData(arrayBuffer, function(buffer) { //解码成功时的回调函数
-        audioBuffer = buffer;
-        playSound();
-      }, function(e) { //解码出错时的回调函数
-        console.log('Error decoding file', e);
-      });
-    }
-
-    function loadAudioFile(url) {
-      var xhr = new XMLHttpRequest(); //通过XHR下载音频文件
-      xhr.open('GET', url, true);
-      xhr.responseType = 'arraybuffer';
-      xhr.onload = function(e) { //下载完成
-        initSound(this.response);
-      };
-      xhr.send();
-    }
-// 安卓，加载并播放
-    if (!(/iphone/.test(navigator.userAgent.toLowerCase()))) {
-      loadAudioFile('../music.mp3');
-    }
-// 这块是移动端ios自动播放
-    const invoke = () => {
-      if (/iphone/.test(navigator.userAgent.toLowerCase())) {
-        if (htmlAudio.paused) {
-          htmlAudio.play()
-        }
-      }
-    }
-
-    if (typeof WeixinJSBridge === 'undefined') {
-      document.addEventListener('WeixinJSBridgeReady', () =>
-              WeixinJSBridge.invoke('getNetworkType', {}, () => invoke())
-      )
-    }
-    else {
-      WeixinJSBridge.invoke('getNetworkType', {}, () => invoke())
-    }
-// 按钮播放与暂停
-    $('#start').on('click', function() {
-      if (/iphone/.test(navigator.userAgent.toLowerCase())) {
-        htmlAudio.play()
-      } else {
-        playSound()
+<script type="text/javascript">
+  $(function(){
+    $(document).ready(function () {
+      if (!sessionStorage.getItem("bgm")) {
+        $("#bgmvideo").append(
+                '<audio src="https://tyst.migu.cn/public/product9th/product44/2021/09/2619/2021%E5%B9%B406%E6%9C%8804%E6%97%A501%E7%82%B903%E5%88%86%E5%86%85%E5%AE%B9%E5%87%86%E5%85%A5%E5%8D%8E%E7%BA%B32%E9%A6%96500955/%E6%A0%87%E6%B8%85%E9%AB%98%E6%B8%85/MP3_320_16_Stero/6005752QGEV190651.mp3" autoplay hidden></audio>'
+        );
+        sessionStorage.setItem("bgm", 1)
       }
     })
-    $('#stop').on('click', function() {
-      if (/iphone/.test(navigator.userAgent.toLowerCase())) {
-        htmlAudio.pause()
-      } else {
-        stopSound()
-      }
-    })
+  });
 </script>
+
+
 </html>
